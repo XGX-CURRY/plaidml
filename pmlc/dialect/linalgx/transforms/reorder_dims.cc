@@ -125,6 +125,12 @@ static void reorderDim1and3(linalg::GenericOp op, ArrayRef<unsigned> argIdxs) {
       llvm::to_vector<4>(op.iterator_types().getAsValueRange<StringAttr>()),
       /*doc=*/"",
       /*libraryCall=*/"");
+  for (auto attr : op->getAttrs()) {
+    if (attr.first != "indexing_maps" && attr.first != "iterator_types" &&
+        attr.first != "operand_segment_sizes") {
+      newGeneric->setAttr(attr.first, attr.second);
+    }
+  }
   BlockAndValueMapping bvm;
   op.region().cloneInto(&newGeneric.getRegion(), bvm);
 
